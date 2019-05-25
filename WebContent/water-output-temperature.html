@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出水口温度实时监控</title>
+</head>
+<body>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="utils-js/draw-js/highcharts.js"></script>
+	<script src="utils-js/draw-js/exporting.js"></script>
+	<script src="utils-js/draw-js/export-data.js"></script>
+
+	<div id="container"
+		style="min-width: 310px; height: 550px; margin: 0 auto"></div>
+
+
+
+<script type="text/javascript">
+
+		Highcharts.chart('container', {
+		    chart: {
+		        type: 'spline',
+		        animation: Highcharts.svg, // don't animate in old IE
+		        marginRight: 10,
+		        events: {
+		            load: function () {
+		
+		                // 更新数据,每秒从后台获取1个数据
+		                var s1 = this.series[0];
+		                var s2 = this.series[1];
+		                setInterval(function () {
+		                	$.get("/xiaoyueyue/WaterOutputServlet",function(source,status){
+		                		var t1 = source.x;// 时间 x 轴
+		                		var y1 = source.s1; // 实时出水口温度
+		                		var y2 = 70; // 标准出水口温度
+		                		s1.addPoint([t1, y1], true, true);
+		                		s2.addPoint([t1,y2],true,true);
+		                	});
+		                }, 1000);
+		            }
+		        }
+		    },
+		    legend: {
+		    	　　align: "right", //程度标的目标地位
+		    	　　verticalAlign: "top" //图标显示在顶部
+		 
+		    	},
+		    time: {
+		        useUTC: false
+		    },
+		    title: {
+		        text: '出水口温度实时监控曲线'
+		    },
+		    xAxis: {
+		    	title:{
+		    		text: '时间'
+		    	},
+		        type: 'datetime',
+		        tickPixelInterval: 150,
+		        labels:{
+		        	style :{
+		        		color: '#0000ff'
+		        	}
+		        }
+		    },
+		    yAxis: {
+		        title: {
+		            text: '温度℃'
+		        },
+		        plotLines: [{
+		            //value: 0,
+		            value: 0,
+		            width: 1,
+		            color: '#00ff00'
+		        }],
+		        labels :{
+		        	style:{
+		        		color: '#0000ff'
+		        	}
+		        }
+		    },
+		    // 自定义版权信息以及样式
+		    credits:{
+		    	enabled: true,
+		    	href : 'localhost:8090/xiaoyueyue/login.html',
+		    	text : '黑龙江大学电子工程学院',
+		    	position :{
+		    		align : 'right'
+		    	},
+		    	style:{
+		    		color: 'blue',
+		    		// 字体大小
+		    		fontSize: '10px'
+		    	}
+		    },
+		    tooltip: {
+		        headerFormat: '<b>{series.name}</b><br/>',
+		        pointFormat: '{point.x:%Y-%m-%d %H:%M}<br/>{point.y:.2f}',
+		        style : {
+		            color : "rgb(38, 56, 74)", // 提示文字的颜色
+		            fontSize : "12px",
+		            fontWeight : "blod",
+		            fontFamily : "Courir new"
+		        }
+		    },
+		    legend: {
+		        enabled: true,
+		        // 设置图例的位置 顶部
+		        verticalAlign: 'top'
+		    },
+		    exporting: {
+		    	// 设置是否导出图像
+		        enabled: true
+		    },
+		    series: [{
+		        name: '出水口实时温度',
+		        data: (function () {
+		            // generate an array of random data
+		            var data = [],
+		                time = (new Date()).getTime(),
+		                i;
+		             // 初始数据,总共20个点
+		            //for (i = -19; i <= 0; i += 1) 
+		            	for(i = -4; i <=0; i ++)
+		            {
+		                data.push({
+		                    x: time + i * 1000 ,
+		                    //y: Math.random() + 1
+		                    y : 0
+		                });
+		            }
+		            return data;
+		        }())
+		    },
+		    {
+		        name: '标准出水口温度',
+		        data: (function () {
+		            // 初始化出随口温度
+		            var data = [], time = (new Date()).getTime(),i;
+		            	for(i = -4; i <=0; i ++)
+		                {
+		                data.push({
+		                    x: time + i * 1000 ,
+		                    //y: Math.random() + 1
+		                    y : 0
+		                });
+		            }
+		            return data;
+		        }())
+		    }
+		    ]
+		});
+</script>
+</body>
+</html>

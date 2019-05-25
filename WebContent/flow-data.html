@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>霍尔流量数据</title>
+<link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/icon.css">
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+	<div id='bar'>
+		用户 <input class='easyui-textbox'style="width: 75px, height: 22px" name = 'user_id' id = "user_id">&nbsp;&nbsp;&nbsp;
+		日期 <input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'start_date' id = "start_date">&nbsp;
+		             to  &nbsp;
+		    <input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'end_date' id = "end_date">
+		<a href='javascript:search()' class='easyui-linkbutton' data-options="iconCls:'icon-search',plain:true">查询</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="#" class="easyui-linkbutton" id ="export" data-options="iconCls:'icon-reload',plain:true" onclick="export()">导出</a>&nbsp;&nbsp;
+		<a href="javascript:print()" class="easyui-linkbutton" iconCls="icon-print" plain="true">打印</a>
+	</div>
+	<table id='dg'></table>
+	<script type="text/javascript">
+		$("#dg").datagrid({
+			url : 'FlowDataServlet', 
+			title : "水流量信息",
+			border : false, // 边框 无
+			toolbar : '#bar',
+			pagination : true,
+			fit : true, // 自适应
+			pageSize : '5', // 初始表格记录数目
+			pageList : [ 5,10, 15, 20, 25 ], // 可选的每页记录数目
+			singleSelect : true,
+			striped : true, 
+			columns : [ [ {
+				// field : 'username',
+				field : 'user_id',
+				title : '用户编号',
+				width : '25%',
+				align : 'center'
+			}, {
+				field : 'water_flow',
+				title : '水流量',
+				width : '25%',
+				align : 'center'
+			}, 
+			{
+				field : 'data_range',
+				title : '时间段',
+				width : '25%',
+				align : 'center'
+			},
+			{
+				field : 'is_normal',
+				title : '是否正常',
+				width : '25%',
+				align : 'center'
+			}
+			] ]
+		});
+		$('#dg').datagrid('reload');
+	</script>
+</body>
+<script>
+var url;
+//按照条件搜索
+function search(){
+	// 搜索水流量的Servlet
+	var url = 'FlowDataServlet';
+	$("#dg").datagrid("load",{
+	 	user_id: $("#user_id").val(),
+	 	start_date: $("#start_date").val(),
+	 	end_date : $("#end_date").val()
+	 })
+	}
+//导出excel表格
+$("body").on('click',"#export",function() {
+	//设置导出excel文件名
+    $('#dg').datagrid('toExcel',"进出水口温度_Query.xls");
+});
+$.extend($.fn.datagrid.methods, {
+    toExcel: function(jq, filename){
+        return jq.each(function(){
+            var uri = 'data:application/vnd.ms-excel;base64,'
+                , template = '<html xmlns:o="urn:schemas-microsoft-com:office" xmlns:x="urn:schemas-microsoft-com:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><?xml version="1.0" encoding="UTF-8" standalone="yes"?><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>'+
+                '</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table style="vnd.ms-excel.numberformat:@">{table}</table></body></html>'
+               
+               base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+                , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+
+            var alink = $('<a style="display:none"></a>').appendTo('body');
+            var view = $(this).datagrid('getPanel').find('div.datagrid-view');
+
+            var table = view.find('div.datagrid-view2 table.datagrid-btable').clone();
+            var tbody = table.find('>tbody');
+            view.find('div.datagrid-view1 table.datagrid-btable>tbody>tr').each(function(index){
+                $(this).clone().children().prependTo(tbody.children('tr:eq('+index+')'));
+            });
+
+            var head = view.find('div.datagrid-view2 table.datagrid-htable').clone();
+            var hbody = head.find('>tbody');
+            view.find('div.datagrid-view1 table.datagrid-htable>tbody>tr').each(function(index){
+                $(this).clone().children().prependTo(hbody.children('tr:eq('+index+')'));
+            });
+            hbody.prependTo(table);
+
+            var ctx = { worksheet: name || 'Worksheet', table: table.html()||'' };
+            alink[0].href = uri + base64(format(template, ctx));
+            alink[0].download = filename;
+            alink[0].click();
+            alink.remove();
+        })
+    }
+});
+</script>
+</html>

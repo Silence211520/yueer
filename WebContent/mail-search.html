@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>历史邮件查询</title>
+<link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/icon.css">
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+	<div id='bar'>
+		用户名&nbsp;&nbsp;<input class='easyui-textbox'style="width: 75px, height: 22px" name = 'user_id' id = "user_id">&nbsp;&nbsp;&nbsp;
+		日期&nbsp;&nbsp;<input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'start_date' id = "start_date">&nbsp;
+		             to  &nbsp;
+		    <input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'end_date' id = "end_date">&nbsp;&nbsp;
+		    邮件类型&nbsp;&nbsp;<select id="mail_type" class="easyui-combobox" name="mail_type" style="width:100px;">
+		                <option value="all_mail" >全部</option>
+					    <option value = 'add_account'>用户注册</option>
+					    <option value = 'modify_mail'>账户修改</option>
+					    <option value = 'alert_mail'>预警邮件</option>
+					</select>
+		<a href='javascript:search()' class='easyui-linkbutton' data-options="iconCls:'icon-search',plain:true">查询</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
+	</div>
+	<table id='dg'></table>
+	<script type="text/javascript">
+		$("#dg").datagrid({
+			url : 'MailSerach', 
+			title : "历史邮件查询",
+			border : false, // 边框 无
+			toolbar : '#bar',
+			pagination : true,
+			fit : true, // 自适应
+			pageSize : '5', // 初始表格记录数目
+			pageList : [ 5,10, 15, 20, 25 ], // 可选的每页记录数目
+			singleSelect : true,
+			striped : true, 
+			columns : [ [ {
+				// field : 'username',
+				field : 'user_name',
+				title : '用户名',
+				width : '20%',
+				align : 'center'
+			}, {
+				field : 'mail_type',
+				title : '邮件类型',
+				width : '20%',
+				align : 'center'
+			}, 
+			{
+				field : 'subject',
+				title : '邮件主题',
+				width : '20%',
+				align : 'center'
+			},
+			{
+				field : 'send_time',
+				title : '发送时间',
+				width : '20%',
+				align : 'center'
+			},
+			{
+				field : 'contract',
+				title : '联系方式',
+				width : '20%',
+				align : 'center'
+			}
+			] ]
+		});
+		$('#dg').datagrid('reload');
+	</script>
+</body>
+<script>
+var url;
+//按照条件搜索
+function search(){
+	// 历史邮件搜索
+	var url = 'MailSerach';
+	$("#dg").datagrid("load",{
+	 	user_id: $("#user_id").val(),
+	 	start_date: $("#start_date").val(),
+	 	end_date : $("#end_date").val(),
+	 	// 获取邮件类别
+	 	mail_type : $('#mail_type option:selected').val()
+	 })
+	}
+</script>
+</html>

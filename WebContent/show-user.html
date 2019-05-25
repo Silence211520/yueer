@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>查看用户信息</title>
+<script type="text/javascript" src= 'jquery-easyui-1.5.5.2/jquery.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.easyui.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js'></script>
+<link rel="stylesheet" href='jquery-easyui-1.5.5.2/themes/default/easyui.css' type='text/css'/>
+<link rel='stylesheet' href = 'jquery-easyui-1.5.5.2/themes/icon.css'>
+</head>
+<body>
+<div id = 'bar'>
+	 <input class='easyui-textbox' data-options = "prompt:'用户名/手机号'" name = 'user_id' id = "kw">
+	<a href='javascript:search()' class='easyui-linkbutton' data-options="iconCls:'icon-search',plain:true">查询</a>
+</div>
+	<table id='dg'></table>
+	<script type="text/javascript">
+		$("#dg").datagrid({
+			url : 'UserInfoServlet', 
+			title : "用户信息",
+			border : false, // 边框 无
+			toolbar : '#bar',
+			pagination : true,
+			fit : true, // 自适应
+			pageSize : '5', // 初始表格记录数目
+			pageList : [ 5,10, 15, 20, 25 ], // 可选的每页记录数目
+			singleSelect : true,
+			striped : true, // 背景交替出现
+			columns : [ [ {
+				// field : 'username',
+				field : 'user_id',
+				title : '用户编号',
+				width : '20%',
+				align : 'center'
+			}, {
+				field : 'user_name',
+				title : '进水口温度',
+				width : '20%',
+				align : 'center'
+			}, {
+				field : 'area',
+				title : '房屋面积',
+				width : '20%',
+				align : 'center'
+			},
+			{
+				field : 'address',
+				title : '住址',
+				width : '20%',
+				align : 'center'
+			},
+			{
+				field : 'phone',
+				title : '联系方式',
+				width : '20%',
+				align : 'center'
+			}
+			] ]
+		});
+		$('#dg').datagrid('reload');
+	</script>
+</body>
+<script>
+var url;
+//按照条件搜索
+function search(){
+	// 按照手机号或者用户名进行搜索
+	var url = 'UserInfoServlet';
+	$("#dg").datagrid("load",{
+	 	kw : $("#kw").val()
+	 })
+	}
+</script>
+</html>

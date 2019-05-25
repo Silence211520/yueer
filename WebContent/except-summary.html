@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"><link rel="icon" href="https://static.jianshukeji.com/highcharts/images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            /* css 代码  */
+        </style>
+        <script src="https://img.highcharts.com.cn/highcharts/highcharts.js"></script>
+        <script src="https://img.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+        <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+        <script src="https://img.highcharts.com.cn/highcharts/themes/grid-light.js"></script>
+        <link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/default/easyui.css">
+        <link rel="stylesheet" type="text/css" href="jquery-easyui-1.5.5.2/themes/icon.css">
+		<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js"></script>
+    </head>
+    <body>
+        日期 <input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'start_date' id = "start_date">&nbsp;
+			             to  &nbsp;
+	     <input type="text" class="easyui-datebox" required="required" style="width: 75px, height: 22px" name = 'end_date' id = "end_date">
+		<a href='javascript:search()' class='easyui-linkbutton' data-options="iconCls:'icon-search',plain:true">查询</a>
+        <div id="container" style="min-width:400px;height:400px"></div>
+        <script src = 'utils-js/draw-js/alert.js'></script>
+    </body>
+</html>

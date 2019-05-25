@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>网页顶部</title>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+<body bgcolor="#293949" >
+<div style="color:white;position:absolute;left:500px;top:25px;font-family:宋体;font-weight: bold; font-size: 20px;">小区供暖监控系统</div>
+<div style="color:white;position:absolute;right:20px;top:35px;font-family:宋体;font-size:12px;">欢迎 <span></span> | 
+ <a href="http://localhost:8090/xiaoyueyue/login.html" target= "_blank"  style="color:white;font-family:宋体;text-decoration : none;">退出 </a></div>
+</body>
+<script type="text/javascript">
+$.get("/xiaoyueyue/GetLoginUser", function(data){
+	 //获取当前登录的用户名
+	 var name = data.user;
+	  $("span").html('<b>'+name+'<b>');
+	});
+</script>
+</html>

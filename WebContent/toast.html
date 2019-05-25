@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link type="text/css" rel="stylesheet" href="utils-css/toast-css/jquery.toast.css">
+<script type="text/javascript" src="utils-js/toast-js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="utils-js/toast-js/jquery.toast.js"></script>
+<title>Toast弹窗案例</title>
+</head>
+<body>
+<p onclick="test();">点我弹窗</p><br>
+</body>
+<script type="text/javascript">
+function test(title){
+	success_toast('邮件状态提醒','发送成功');
+}
+// 成功后的弹窗
+function success_toast(title,content){
+	$.toast({
+		heading : title,
+		icon : 'success',
+		text: [
+	        content,
+	        '注册信息已通过邮件发送到您的邮箱中',
+	        '请注意查收'
+	    ],
+		hideAfter : 5000, // 5秒后自动关闭
+		stack : false,
+		position : 'mid-center', // 弹窗的位置 居中显示
+		allowToastClose: false ,// 没有关闭的x
+		showHideTransition: 'fade' //'slide'
+	})	
+}
+// 错误提示弹窗
+function error_toast(title,content){
+	$.toast({
+		heading : title,
+		icon : 'error',
+		text: content,
+		hideAfter : 5000, // 5秒后自动关闭
+		allowToastClose : false,
+		stack : false,
+		position : 'mid-center',
+		showHideTransition : 'fade'
+	});
+}
+</script>
+</html>

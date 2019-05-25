@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>邮件模板配置</title>
+<link rel="stylesheet" href='jquery-easyui-1.5.5.2/themes/default/easyui.css' type='text/css' />
+<link rel='stylesheet' href='jquery-easyui-1.5.5.2/themes/icon.css'>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.easyui.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js'></script>
+<link rel="stylesheet" type="text/css" href="utils-css/login/login-style.css">
+<link type="text/css" rel="stylesheet" href="utils-css/toast-css/jquery.toast.css">
+<script type="text/javascript" src="utils-js/toast-js/jquery.toast.js"></script>
+</head>
+<body bgcolor='#EEE0E5'>
+   <div class="header">
+	<a  id = 'add_link' href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true">用户信息录入</a>
+	</div>
+	<div id="layer-mask" class="layer-mask"></div>
+	<div id="layer-pop" class="layer-pop">
+		<div id="layer-close" class="layer-close">x</div>
+		<div id="layer-content" class="layer-content">
+		</div>
+	</div>
+	<!-- 新增用户窗体 -->
+	<div id="add_templete" style="display:none;">
+		<div class="login">
+			<h4 class="title">用户信息配置</h4>
+			<div class="item">
+				<label>用户姓名</label>
+				<input id="user_name" class="input" name="user_name" type="text" placeholder = '在此输入用户名'/>
+			</div>
+			<div class="item">
+				<label>用户编号</label>
+				<input type="text" id = 'user_id' class="input"  name = "user_id" type='text' placeholder ='用户编号如:0x18001FA1'/>
+			</div>
+			<div class="item">
+				<label>房屋面积</label>
+				<input id="area" class="input" name="area" placeholder = '在此输入房屋面积(总面积)' type="text"/>
+			</div>
+			<div class="item">
+				<label>组数</label>
+				<input id="heat_count" class="input" name="heat_count" placeholder = '在此输入暖气片的组数' type="text"/>
+			</div>
+			<div class="item">
+				<label>住址</label>
+				<input id="address" class="input" name="address" type="text" placeholder='在此输入用户地址' />
+			</div>
+			<div class="item">
+				<label>联系方式</label>
+				<input id="phone" class="input" name="phone" type="text" placeholder='在此输入手机号码'/>
+			</div>
+			<p class="error-msg"></p>
+			<div class="item">
+				<label>&nbsp;</label>
+				<input id="add_btn" type="button" class="submit" value="立即添加"/>
+			</div>
+		</div>
+	</div>
+
+	
+</body>
+<script type="text/javascript">
+$(document).ready(function($){
+	// 登录链接事件
+	$("#add_link").click(function(){
+		// 加载添加模板弹窗
+		var loginHtml = $("#add_templete").html();
+		showLayer(loginHtml,550,500,closeCallback);
+		// 新增邮件模板
+		$("#add_btn").click(function(){
+			var user_name = $("#user_name").val();
+			var user_id = $("#user_id").val();
+			var area = $("#area").val();
+			var address = $("#address").val();
+			var phone = $("#phone").val();
+			if(user_name == '' || user_id == '' || area == '' || address == '' || phone == ''){
+				error_toast('信息校验','亲,所有的字段为必填字段!')
+				return;
+			}
+			else{
+				$.ajax({
+					url : "/xiaoyueyue/AddUser",
+					type: "post",
+					data:{
+						user_name: user_name,
+						user_id : user_id,
+						area : area,
+						address : address,
+						phone : phone
+					},
+					success : function(data){
+						var msg = data.msg;
+						if(msg.indexOf("失败")!=-1){
+							error_toast('添加状态提醒',msg);
+							$("#user_name").val("");
+							$("#user_id").val("");
+							$("#area").val("");
+							$("#address").val("");
+							$("#phone").val("");
+						}
+						else{
+							success_toast('添加状态提醒',msg);
+						}
+					}
+				});
+			}
+		});
+	});
+    /**
+     * 错误toast弹窗信息
+     */
+	function error_toast(title,content){
+		$.toast({
+			heading : title,
+			icon : 'error',
+			text: content,
+			hideAfter : 3000, // 5秒后自动关闭
+			allowToastClose : false,
+			stack : false,
+			position : 'top-center',
+			showHideTransition : 'fade'
+		});
+	}
+	/**
+	 * 登录成功弹窗提醒
+	 */
+	function success_toast(title,content){
+		$.toast({
+			heading : title,
+			icon : 'success',
+			text: content,
+			hideAfter : 5000, // 5秒后自动关闭
+			stack : false,
+			position : 'top-center', // 弹窗的位置 居中显示
+			allowToastClose: false ,// 没有关闭的x
+			showHideTransition: 'fade' //'slide'
+		})	
+	}
+	// 弹出层关闭回调函数
+	function closeCallback(){
+		$(".error-msg").html("");
+	}	
+	// 显示弹出层
+	function showLayer(html,width,height,closeCallback){
+		// 显示弹出层遮罩
+		$("#layer-mask").show();
+		// 显示弹出层窗体
+		$("#layer-pop").show();
+		// 设置弹出层窗体样式
+		$("#layer-pop").css({
+			width : width,
+			height : height
+		});
+		// 填充弹出层窗体内容
+		$("#layer-content").html(html);
+		// 弹出层关闭按钮绑定事件
+		$("#layer-close").click(function(){
+			// 弹出层关闭
+			hideLayer();
+			// 关闭的回调函数
+			closeCallback();
+		});
+	}
+
+	// 隐藏弹出层
+	function hideLayer(){
+		// 弹出层关闭
+		$("#layer-mask").hide();
+		$("#layer-pop").hide();
+	}
+
+});
+</script>
+</body>
+</html>

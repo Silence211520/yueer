@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>左侧导航栏</title>
+<link rel = 'stylesheet ' href = 'utils-css/JqueryCss/jquery-ui.css'>
+<link rel='stylesheet' href='utils-css/left/style.css'>
+</head>
+<body>
+<div style="text-align:center;clear:both">
+</div>
+  <aside class="sidebar">
+  <div id="leftside-navigation" class="nano">
+    <ul class="nano-content">
+    <!-- 整个主界面的开始 这个里面你得要想好如何规划。我如果把天气的程序放进来会怎么样？  -->
+      <li>
+        <a href="content.html" target="main"><i class="fa fa-dashboard"></i><span>主界面</span></a>
+      </li>
+     <!--   UI element 开始-->
+      <li class="sub-menu">
+        <a href="javascript:void(0);"><i class="fa fa-bar-chart-o"></i><span>监控曲线图</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li>
+            <a href="water-input-temperature.html" target= "main">进水口温度监控</a>
+          </li>
+          <li><a href="water-output-temperature.html" target = 'main'>出水口温度监控</a>
+          </li>
+          <li><a href="water-flow.html" target='main'>水流量实时监控</a>
+          <li><a href="room-temperature.html" target='main'>室内-室外温度实时监控</a>
+          </li>
+          <li><a href="comprehensive-together.html" target='main'>综合数据监控</a>
+          </li>
+        </ul>
+      </li>
+     <!--   UI 子菜单结束-->
+      <!-- table 部分开始 -->
+      <li class="sub-menu">
+        <a href="javascript:void(0);"><i class="fa fa-table"></i><span>监控数据</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li><a href="io-data.html" target= "main">进出水口温度</a>
+          </li>
+          <li><a href="flow-data.html" target="main">霍尔流量</a>
+          </li>
+        </ul>
+      </li>
+     <!--   table 部分结束-->
+      <!-- forms 子菜单开始 -->
+      <li class="sub-menu">
+        <a href="javascript:void(0);"><i class="fa fa fa-tasks"></i><span>用户信息配置</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li><a href="add-user.html" target="main">录入用户信息</a>
+          </li>
+          <li><a href="show-user.html" target="main">查看用户信息</a>
+          </li>
+        </ul>
+      </li>
+      <!--  mail 子菜单开始-->
+      <li class="sub-menu active">
+        <a href="javascript:void(0);"><i class="fa fa-envelope"></i><span>邮件模块</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li class="active"><a href="mail-templete.html" target="main">电子邮件模板</a>
+          </li>
+          <li><a href="mail-search.html" target="main">邮件查询</a>
+          </li>
+        </ul>
+      </li>
+      <li class="sub-menu">
+        <a href="javascript:void(0);"><i class="fa fa-bar-chart-o"></i><span>数据报表</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li><a href="flow-summary.html" target= "main">流量汇总</a>
+          </li>
+          <li><a href="io-temperature-summary.html" target="main">进出水口温度汇总</a>
+          </li>
+          <li><a href="except-summary.html" target="main">供暖监测汇总</a></li>
+        </ul>
+      </li>
+     <!--   mail 子菜单结束 -->
+      <li class="sub-menu">
+        <a href="javascript:void(0);"><i class="fa fa-map-marker"></i><span>区域信息配置</span><i class="arrow fa fa-angle-right pull-right"></i></a>
+        <ul>
+          <li><a href="user-area.html" target = "main">用户区域信息配置</a>
+          </li>
+          <li><a href="except-area.html" target = "main">异常区域定位</a>
+          </li>
+        </ul>
+      </li>
+    </ul> 
+  </div>
+</aside>
+<script src='utils-js/left/jquery.min.js'></script>
+<script  src="utils-js/left/index.js"></script>
+</body>
+</html>

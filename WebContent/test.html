@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>鼠标悬停显示提示信息窗口</title>
+<meta http-equiv="content-type">
+<style type="text/css">
+.content{
+    display:none;
+    width:250px;
+    height:70px;
+    border-radius:10px;
+    padding:20px;
+    position:relative;
+    top:15px;
+    left:80px;
+    background-color:#2F4056;
+}
+</style>
+<script src="utils-js/toast-js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+$(".contact").mouseover(function(){
+$(".content").show("slow");
+$(".contact").mouseout(function(){
+$(".content").hide("slow");
+});
+});
+})
+</script>
+</head>
+<body>
+    <a href="#" style="color: blue" class="contact">不再犹豫</a>    
+    <div class="content" style="color: white;">
+        无聊望见了忧郁，达到理想不太易<br /><br />
+        谁人定我去或留，定我心中的宇宙
+    </div>
+</body>
+</html>

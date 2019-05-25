@@ -1,0 +1,253 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>邮件模板配置</title>
+<link rel="stylesheet" href='jquery-easyui-1.5.5.2/themes/default/easyui.css' type='text/css' />
+<link rel='stylesheet' href='jquery-easyui-1.5.5.2/themes/icon.css'>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.easyui.min.js'></script>
+<script type="text/javascript" src='jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js'></script>
+<link rel="stylesheet" type="text/css" href="utils-css/login/login-style.css">
+<link type="text/css" rel="stylesheet" href="utils-css/toast-css/jquery.toast.css">
+<script type="text/javascript" src="utils-js/toast-js/jquery.toast.js"></script>
+</head>
+<body bgcolor='#EEE0E5'>
+   <div class="header">
+	<a  id = 'add_link' href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加模板</a>
+	<a  id = 'advance_link' href="#" class="easyui-linkbutton"  data-options = " iconCls: 'icon-edit',plain:true" >高级设置</a>
+	</div>
+	<!-- 弹出层遮罩 -->
+	<div id="layer-mask" class="layer-mask"></div>
+	<!-- 弹出层窗体 -->
+	<div id="layer-pop" class="layer-pop">
+		<!-- 弹出层关闭按钮 -->
+		<div id="layer-close" class="layer-close">x</div>
+		<!-- 弹出层内容区域 -->
+		<div id="layer-content" class="layer-content">
+			
+		</div>
+	</div>
+
+	<!-- 登录窗体 -->
+	<div id="add_templete" style="display:none;">
+		<!-- 登录窗体 -->
+		<div class="login">
+			<h4 class="title">新增模板</h4>
+			<div class="item">
+				<label>内容格式</label>
+				<select  name="content_type" class = 'input'>
+					<option value="text" >文本类型</option>
+					<option value="html">html类型</option>				
+				</select>
+			</div>
+			<div class="item">
+				<label>邮件类型</label>
+				<select  name="type" class = 'input'>
+					<option value="register_mail" >注册提醒邮件</option>
+					<option value="modify_mail">账户更改信息提醒邮件</option>
+					<option value ='alert_mail'>异常预警提醒邮件</option>			
+				</select>
+			</div>
+			<div class="item">
+				<label>邮件主题</label>
+				<input id="subject" class="input" name="subject" type="text" placeholder = '在此输入邮件主题'/>
+			</div>
+			<div class="item">
+				<label>抬头信息</label>
+				<input id="mail_head" class="input" name="mail_head" type="text" placeholder = '在此输入邮件抬头信息'"/>
+			</div>
+			<p class="error-msg"></p>
+			<div class="item">
+				<label>&nbsp;</label>
+				<input id="add_btn" type="button" class="submit" value="立即添加"/>
+			</div>
+		</div>
+	</div>
+
+	<!-- 注册窗体 -->
+	<div id="advance_config" style="display:none;">
+		<!-- 注册窗体 -->
+		<div class="login">
+			<h4 class="title">邮件高级设置</h4>
+			<div class="item">
+				<label>发送时间</label>
+				<select  name="notice_time" class = 'input'>
+					<option value="time_now" >立即</option>
+					<option value="time_30">延迟30分钟</option>
+					<option value ='time_constant'>固定时间（每天早晚8点）</option>			
+				</select>
+			</div>
+			<div class='item'>
+				<label>重复提示</label>
+				<select  name="repeate" class = 'input'>
+					<option value="repeate_true" >是</option>
+					<option value="repeate_false">否</option>			
+				</select>
+			</div>
+			<div class='item'>
+				<label>抄送人</label>
+				<select  name="copy_mail" class = 'input'>
+					<option value="no_copy" >无</option>
+					<option value="admin_mail">系统管理人员</option>			
+				</select>
+			</div>
+			<div class='item'>
+				<label>隐私设置</label>
+				<select  name="private_set" class = 'input'>
+					<option value="public">任何人都可以查看</optio>		
+					<option value="admin_look" >系统管理员&自己查看</option>	
+					<option value="private_look" >仅自己可查看</option>
+				</select>
+			</div>
+			<div class="item">
+				<label>&nbsp;</label>
+				<input id="config_btn" type="button" class="submit" value="提交设置"/>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+$(document).ready(function($){
+	// 登录链接事件
+	$("#add_link").click(function(){
+		// 加载添加模板弹窗
+		var loginHtml = $("#add_templete").html();
+		showLayer(loginHtml,500,400,closeCallback);
+		// 新增邮件模板
+		$("#add_btn").click(function(){
+			var content_type = $('select[name="content_type"] option:selected').val();
+			var type = $('select[name="type"] option:selected').val();
+			var subject = $("#subject").val();
+			var mail_head = $("#mail_head").val();
+			if(subject ==="" || mail_head === ""){
+				error_toast('信息校验','亲,主题和抬头信息不允许为空！')
+				return;
+			}
+			else{
+				$.ajax({
+					url : "/xiaoyueyue/MailTemplete",
+					type: "post",
+					data:{
+						content_type: content_type,
+						type: type,
+						subject : subject,
+						mail_head : mail_head
+					},
+					success : function(data){
+						var msg = data.msg;
+						if(msg.indexOf("失败")!=-1){
+							error_toast('添加状态提醒',msg);
+							$("#subject").val("");
+							$("#mail_head").val("");
+						}
+						else{
+							success_toast('添加状态提醒',msg);
+						}
+					}
+				});
+			}
+		});
+	});
+
+	// 处理邮件高级配置
+	$("#advance_link").click(function(){
+		// 获取注册窗体代码
+		var regeHtml = $("#advance_config").html();
+		showLayer(regeHtml,500,400,closeCallback);
+
+		// 高级配置
+		$("#config_btn").click(function(){
+			var notice_time = $('select[name="notice_time"] option:selected').val();
+			var repeate = $('select[name="repeate"] option:selected').val();
+			var copy_mail = $('select[name="copy_mail"] option:selected').val();
+			var private_set = $('select[name="private_set"] option:selected').val();
+				$.ajax(
+						{
+							url: "/xiaoyueyue/AdvanceConfig",
+							type : "post",
+							data :{
+								notice_time : notice_time,
+								repeate : repeate,
+								copy_mail : copy_mail,
+								private_set : private_set
+							},
+							success : function(data){
+								var msg = data.msg;
+								if (msg.indexOf("成功")!=-1){
+									success_toast('操作状态提醒',msg);
+								}
+								else {
+									error_toast('操作状态提醒',msg);
+								}
+							}
+						});
+		});
+	});
+    /**
+     * 错误toast弹窗信息
+     */
+	function error_toast(title,content){
+		$.toast({
+			heading : title,
+			icon : 'error',
+			text: content,
+			hideAfter : 3000, // 5秒后自动关闭
+			allowToastClose : false,
+			stack : false,
+			position : 'top-center',
+			showHideTransition : 'fade'
+		});
+	}
+	/**
+	 * 登录成功弹窗提醒
+	 */
+	function success_toast(title,content){
+		$.toast({
+			heading : title,
+			icon : 'success',
+			text: content,
+			hideAfter : 5000, // 5秒后自动关闭
+			stack : false,
+			position : 'top-center', // 弹窗的位置 居中显示
+			allowToastClose: false ,// 没有关闭的x
+			showHideTransition: 'fade' //'slide'
+		})	
+	}
+	// 弹出层关闭回调函数
+	function closeCallback(){
+		$(".error-msg").html("");
+	}	
+	// 显示弹出层
+	function showLayer(html,width,height,closeCallback){
+		// 显示弹出层遮罩
+		$("#layer-mask").show();
+		// 显示弹出层窗体
+		$("#layer-pop").show();
+		// 设置弹出层窗体样式
+		$("#layer-pop").css({
+			width : width,
+			height : height
+		});
+		// 填充弹出层窗体内容
+		$("#layer-content").html(html);
+		// 弹出层关闭按钮绑定事件
+		$("#layer-close").click(function(){
+			// 弹出层关闭
+			hideLayer();
+			// 关闭的回调函数
+			closeCallback();
+		});
+	}
+
+	// 隐藏弹出层
+	function hideLayer(){
+		// 弹出层关闭
+		$("#layer-mask").hide();
+		$("#layer-pop").hide();
+	}
+
+});
+</script>
+</body>
+</html>

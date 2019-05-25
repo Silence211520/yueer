@@ -1,0 +1,263 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- 网页图标 -->
+	<link rel="shortcut icon" href="image-resource/favicon.ico" />
+    <link rel="bookmark" href="image-resource/favicon.ico" />
+	<title>登录界面</title>
+	<link rel="stylesheet" href='jquery-easyui-1.5.5.2/themes/default/easyui.css' type='text/css' />
+	<link rel='stylesheet' href='jquery-easyui-1.5.5.2/themes/icon.css'>
+	<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.min.js'></script>
+	<script type="text/javascript" src='jquery-easyui-1.5.5.2/jquery.easyui.min.js'></script>
+	<script type="text/javascript" src='jquery-easyui-1.5.5.2/locale/easyui-lang-zh_CN.js'></script>
+	<link rel="stylesheet" type="text/css" href="utils-css/login/login-style.css">
+	<link type="text/css" rel="stylesheet" href="utils-css/toast-css/jquery.toast.css">
+<script type="text/javascript" src="utils-js/toast-js/jquery.toast.js"></script>
+<!-- 引入加密sh1加密的js -->
+<script type="text/javascript" src='utils-js/encoding/sh1.js'></script>
+</head>
+<body>
+	<div class="header">
+		<a id="loginLink" href="#">登录</a>
+		&nbsp;&nbsp;
+		<a id="regeLink" href="#">注册</a>
+	</div>
+
+	<!-- 弹出层遮罩 -->
+	<div id="layer-mask" class="layer-mask"></div>
+	<!-- 弹出层窗体 -->
+	<div id="layer-pop" class="layer-pop">
+		<!-- 弹出层关闭按钮 -->
+		<div id="layer-close" class="layer-close">×</div>
+		<!-- 弹出层内容区域 -->
+		<div id="layer-content" class="layer-content">
+			
+		</div>
+	</div>
+
+	<!-- 登录窗体 -->
+	<div id="loginHtml" style="display:none;">
+		<!-- 登录窗体 -->
+		<div class="login">
+			<h4 class="title">登 录</h4>
+			<div class="item">
+				<label>账号</label>
+				<input id="username" class="input" name="username" placeholder = '在此输入用户名/邮箱' type='text'/>
+			</div>
+			<div class="item">
+				<label>密码</label>
+				<input id="password" class="input" name="password" type= 'password' placeholder = '在此输入密码'/ >
+			</div>
+			<p class="error-msg"></p>
+			<div class="item">
+				<label>&nbsp;</label>
+				<input id="loginSubmitBtn" type="button" class="submit" value="立即登录"/>
+			</div>
+		</div>
+	</div>
+
+	<!-- 注册窗体 -->
+	<div id="regeHtml" style="display:none;">
+		<!-- 注册窗体 -->
+		<div class="login">
+			<h4 class="title">注册账号</h4>
+			<div class="item">
+				<!-- <label><img src="images/user.png"width="25" height="25"/></label> -->
+				<label>用户名</label>
+				<input id="user" class="input" name="user" type="text" placeholder="在此输入用户名"/>
+			</div>
+			<div class="item">
+				<!-- <label><img src="images/password.png"width="25" height="25"/></label> -->
+				<label>密  码</label>
+				<input id="pwd" class="input" name="pwd" type="password" placeholder="在此输入密码"/>
+			</div>
+			<div class="item">
+				<!-- <label><img src="images/password.png"width="25" height="25"/></label> -->
+				<label>确认密码</label>
+				<input id="rpwd" class="input" name="rpwd" type="password" placeholder="再次输入密码"/>
+			</div>
+			<div class="item">
+				<!-- <label><img src="images/email.png"width="25" height="25"/></label> -->
+				<label>电子邮箱</label>
+				<input id="email" class="input" name="email" type="text" placeholder="在此输入电子邮箱"/>
+				<p class="error-msg"></p>
+			</div>
+			<div class="item">
+				<label>&nbsp;</label>
+				<input id="regeSubmitBtn" type="button" class="submit" value="立即注册"/>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+$(document).ready(function($){
+	// 登录链接事件
+	$("#loginLink").click(function(){
+		// 获取登录窗体代码
+		var loginHtml = $("#loginHtml").html();
+		showLayer(loginHtml,500,300,closeCallback);
+
+		// 登录表单处理逻辑
+		$("#loginSubmitBtn").click(function(){
+			var username = $("#username").val().trim();
+			var password = hex_sha1($("#password").val().trim());
+			if(username ==="" || password === ""){
+				// $(".login p").html("亲,用户名或密码不能为空！");
+				error_toast('账号格式校验','亲,用户名或密码不能为空！')
+				return;
+			}
+			else{
+				$.ajax({
+					url : "/xiaoyueyue/Login",
+					type: "post",
+					data:{
+						username: username,
+						password: password
+					},
+					success : function(data){
+						var msg = data.msg;
+						if(msg.indexOf("/")!=-1){
+							//浏览器跳转
+							$(location).attr('href', msg);
+						}
+						else{
+							$("#username").val("");
+							$("#password").val("");
+							// 登录失败
+							// $(".login p").html(msg);
+							error_toast('登录状态提醒',msg)
+						}
+					}
+				});
+			}
+		});
+	});
+
+	// 处理注册逻辑
+	$("#regeLink").click(function(){
+		// 获取注册窗体代码
+		var regeHtml = $("#regeHtml").html();
+		showLayer(regeHtml,500,400,closeCallback);
+
+		// 注册表单校验
+		$("#regeSubmitBtn").click(function(){
+			var user = $("#user").val().trim();
+			var pwd = $("#pwd").val().trim();
+			var rpwd = $("#rpwd").val().trim();
+			var email = $("#email").val().trim();
+			var reg = /^\w+@\w+(\.\w)+/ ;
+			if( user === "" || pwd === "" || rpwd === "" || email === ""){
+				error_toast('账号格式校验',"亲,用户名,密码,邮箱不允许为空!");
+				// $(".login p").html("亲,用户名,密码,邮箱为必填字段！");
+				return;
+			}
+			else if(pwd != rpwd){
+				// $(".login p").html("两次输入的密码不一致！");
+				error_toast('账号格式校验','两次输入的密码不一致!');
+				// $("#pwd").val("");
+				// $("#rpwd").val("");
+				return;
+			}
+			else if(!reg.test(email)){
+				// $(".login p").html("电子邮箱的格式有误！");
+				error_toast('登录状态提醒','电子邮箱格式有误!');
+				return;
+			}
+			else{
+				$.ajax(
+						{
+							url: "/xiaoyueyue/Register",
+							type : "post",
+							data :{
+								username : user,
+								password : hex_sha1(pwd), // 加密密码
+								email : email	
+							},
+							success : function(data){
+								var msg = data.msg;
+								// $(".login p").html(msg);
+								if (msg.search('成功')!=-1){
+									success_toast('注册状态提醒',msg);
+								}
+								else {
+									error_toast('注册状态提醒',msg);
+								}
+							}
+						}
+						);
+				
+			}
+		});
+	});
+    /**
+     * 错误toast弹窗信息
+     */
+	function error_toast(title,content){
+		$.toast({
+			heading : title,
+			icon : 'error',
+			text: content,
+			hideAfter : 3000, // 5秒后自动关闭
+			allowToastClose : false,
+			stack : false,
+			position : 'top-center',
+			showHideTransition : 'fade'
+		});
+	}
+	/**
+	 * 登录成功弹窗提醒
+	 */
+	function success_toast(title,content){
+		var mail = $("#email").val();
+		$.toast({
+			heading : title,
+			icon : 'success',
+			text: [
+		        content,
+		        '邮件已发送至,<i>'+mail+"</i>中",
+		        '请注意查收!'
+		    ],
+			hideAfter : 5000, // 5秒后自动关闭
+			stack : false,
+			position : 'top-center', // 弹窗的位置 居中显示
+			allowToastClose: false ,// 没有关闭的x
+			showHideTransition: 'fade' //'slide'
+		})	
+	}
+	// 弹出层关闭回调函数
+	function closeCallback(){
+		$(".error-msg").html("");
+	}	
+	// 显示弹出层
+	function showLayer(html,width,height,closeCallback){
+		// 显示弹出层遮罩
+		$("#layer-mask").show();
+		// 显示弹出层窗体
+		$("#layer-pop").show();
+		// 设置弹出层窗体样式
+		$("#layer-pop").css({
+			width : width,
+			height : height
+		});
+		// 填充弹出层窗体内容
+		$("#layer-content").html(html);
+		// 弹出层关闭按钮绑定事件
+		$("#layer-close").click(function(){
+			// 弹出层关闭
+			hideLayer();
+			// 关闭的回调函数
+			closeCallback();
+		});
+	}
+
+	// 隐藏弹出层
+	function hideLayer(){
+		// 弹出层关闭
+		$("#layer-mask").hide();
+		$("#layer-pop").hide();
+	}
+
+});
+</script>
+</html>
